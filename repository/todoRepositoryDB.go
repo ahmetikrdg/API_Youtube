@@ -11,12 +11,11 @@ import (
 	"time"
 )
 
+//go:generate mockgen -destination=../mocks/repository/mockTodoRepository.go -package=repository API_Youtube/repository TodoRepository
 type TodoRepositoryDB struct {
 	TodoCollection *mongo.Collection
 }
 
-//go generate sonunda todorepository yazan yer interfacein ismini belirtir
-//go:generate mockgen -destination=../mocks/repository/mockTodoRepository.go -package=repository API_Youtube/repository TodoRepository
 type TodoRepository interface {
 	Insert(todo models.Todo) (bool, error)
 	GetAll() ([]models.Todo, error)
