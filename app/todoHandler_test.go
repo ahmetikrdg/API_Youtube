@@ -11,42 +11,32 @@ import (
 	"testing"
 )
 
-var ch TodoHandler
+var td TodoHandler
+var mockService *services.MockTodoService
 
-/*
 func setup(t *testing.T) func() {
-	ct := gomock.NewController(t)
-
-	mockService = services.NewMockTodoService(ct)
-	err := TodoHandler{mockService}
-	if err.Service != nil {
-		log.Fatalln(false)
-	}
-	return func() {
-		defer ct.Finish()
-	}
-
----
-//arrange
 	ctrl := gomock.NewController(t)
-	mockService = service.NewMockCustomerService(ctrl)
-	ch = CustomerHandlers{mockService}
-	router = mux.NewRouter()
-	router.HandleFunc("/customers", ch.getAllCustomers)
+
+	mockService = services.NewMockTodoService(ctrl)
+
+	td = TodoHandler{mockService}
 
 	return func() {
-		router = nil
 		defer ctrl.Finish()
 	}
-}*/
+}
 
 func TestTodoHandler_GetAllTodo(t *testing.T) {
-	ctrl := gomock.NewController(t)
+	teardown := setup(t)
+	defer teardown()
+	//ctrl := gomock.NewController(t)
 
-	mockService := services.NewMockTodoService(ctrl)
-	td := TodoHandler{mockService}
+	//mockService := services.NewMockTodoService(ctrl)
+
+	//td := TodoHandler{mockService}
 
 	router := fiber.New()
+
 	router.Get("/api/todos", td.GetAllTodo)
 
 	var FakeDataForHandler = []models.Todo{
@@ -54,6 +44,7 @@ func TestTodoHandler_GetAllTodo(t *testing.T) {
 		{primitive.NewObjectID(), "Title 2", "Content 2"},
 		{primitive.NewObjectID(), "Title 3", "Content 3"},
 	}
+
 	mockService.EXPECT().TodoGetAll().Return(FakeDataForHandler, nil)
 
 	req := httptest.NewRequest("GET", "/api/todos", nil)
